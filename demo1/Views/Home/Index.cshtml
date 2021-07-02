@@ -5,7 +5,25 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <p>@Model.DateTime</p>
+    <h1 class="display-4">Holidays Tracker</h1>
+    <br />
+    <table class="table table-dark">
+        <tr>
+            <th>Requestor</th>
+            <th>StartDate</th>
+            <th>EndDate</th>
+            <th>Type</th>
+        </tr>
+        @{ 
+            foreach (var i in Model.holidayRequests)
+            {
+                <tr>
+                    <td>@i.RequesterName</td>
+                    <td>@i.StartDate.ToShortDateString()</td>
+                    <td>@i.EndDate.ToShortDateString()</td>
+                    <td>@i.HolidayType</td>
+                </tr>
+            }
+        }
+    </table>
 </div>
