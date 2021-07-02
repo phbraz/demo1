@@ -9,11 +9,19 @@ namespace demo1.Data
 {
     public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> options):base(options)
+        public DataContext() { }
+
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            
+
         }
 
-        public DbSet<HolidayRequest> HolidayRequests { get; set; } 
+        public DbSet<HolidayRequest> HolidayRequests { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(
+                @"Server=.;Database=Demo1;Trusted_Connection=True;ConnectRetryCount=0");
+        }
     }
 }
