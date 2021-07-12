@@ -5,16 +5,50 @@
 
 
 <div>
-    <form>
+    <form method="POST" asp-controller="home" asp-action="InsertHolidayRequest">
         <div class="form-group row">
-            <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Requestor Name</label>
+
+            <label class="col-sm-2 col-form-label col-form-label-sm">Requestor Name</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control form-control-sm" id="colFormLabelSm" placeholder="col-form-label-sm">
+                
+                @Html.TextBoxFor(m => m.RequesterName, new { @class = "form-control form-control-sm" })
+                
             </div>
-            <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Requestor Name</label>
+            <br />
+
+            <label for="RStartDate" class="col-sm-2 col-form-label col-form-label-sm">Start Date</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control form-control-sm" id="colFormLabelSm" placeholder="col-form-label-sm">
+                @Html.TextBoxFor(m => m.StartDate, new { @class = "form-control form-control-sm", @type = "date" })
             </div>
+            <br />
+
+            <label for="REndDate" class="col-sm-2 col-form-label col-form-label-sm">End Date</label>
+            <div class="col-sm-10">
+                @Html.TextBoxFor(m => m.EndDate, new { @class = "form-control form-control-sm", @type = "date" })
+            </div>
+            <br />
+
+            <label for="holidayType" class="col-sm-2 col-form-label col-form-label-sm">Holiday Type</label>
+            <div class="col-sm-10">
+                
+                @Html.DropDownListFor(m => m.HolidayType,
+                    new SelectList(
+                        new List<SelectListItem>
+                        {
+                            new SelectListItem {Text = "Sickness", Value = "0"},
+                            new SelectListItem {Text = "Maternity", Value = "1"},
+                            new SelectListItem {Text = "AnnualLeave", Value = "2"},
+
+                        },
+                        "Value",
+                        "Text"
+
+                ),1)
+                                
+            </div>
+            <br />
         </div>
+        <input class="btn btn-primary" type="submit" value="Submit" >
+
     </form>
 </div>

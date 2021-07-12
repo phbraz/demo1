@@ -4,3 +4,5 @@ demo1.Data/obj
 demo1/obj
 .vs/demo1/v16
 .vs/demo1/DesignTimeBuild
+demo1.Services/bin
+demo1.Services/obj
