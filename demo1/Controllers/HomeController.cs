@@ -1,4 +1,4 @@
-﻿using DataContext = demo1.Data.DataContext;
+﻿using demo1.Services;
 using demo1.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,13 +22,12 @@ namespace demo1.Controllers
 
         public IActionResult Index()
         {
-            using var context = new DataContext();
 
-
+            var holidayService = new HolidayRequestService();
 
             var vm = new HomeIndexViewModel
             {
-                holidayRequests = context.HolidayRequests.ToList()
+                holidayRequests = holidayService.GetAll()
             };
 
             return View(vm);                
