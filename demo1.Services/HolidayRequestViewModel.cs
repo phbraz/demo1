@@ -9,5 +9,8 @@ namespace demo1.Services
         public DateTime EndDate { get; set; }
         public string RequesterName { get; set; }
         public HolidayType HolidayType { get; set; }
+
+        public int TotalHolidays { get; set; }
+
     }
 }

@@ -9,11 +9,19 @@ namespace demo1.Services
 {
    public class HolidayRequestService
     {
+        private readonly DataContext _dataContext;
+
+        public HolidayRequestService()
+        {
+            _dataContext = new DataContext();
+        }
+
+
         public List<HolidayRequestViewModel> GetAll()
         {
-            using var context = new DataContext();
 
-            return context.HolidayRequests.Select(x => new HolidayRequestViewModel 
+
+            return _dataContext.HolidayRequests.Select(x => new HolidayRequestViewModel 
             {
                 EndDate = x.EndDate,
                 HolidayType = x.HolidayType,
@@ -23,5 +31,21 @@ namespace demo1.Services
             ).ToList();
         }
 
+
+        public void AddHoliday(HolidayRequestViewModel holiday)
+        {
+            
+            var holidayRequest = _dataContext.Set<HolidayRequest>();
+            holidayRequest.Add(new HolidayRequest
+            {
+                EndDate = holiday.EndDate,
+                StartDate = holiday.StartDate,
+                RequesterName = holiday.RequesterName,
+                HolidayType = holiday.HolidayType
+
+            });
+
+            _dataContext.SaveChanges();            
+        } 
     }
 }

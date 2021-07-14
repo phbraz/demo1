@@ -15,19 +15,20 @@ namespace demo1.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
+        private readonly HolidayRequestService _holidayService;
+
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+
+            _holidayService = new HolidayRequestService();            
         }
 
         public IActionResult Index()
         {
-
-            var holidayService = new HolidayRequestService();
-
             var vm = new HomeIndexViewModel
             {
-                holidayRequests = holidayService.GetAll()
+                holidayRequests = _holidayService.GetAll()
             };
 
             return View(vm);                
@@ -46,35 +47,11 @@ namespace demo1.Controllers
         [HttpPost]
         public IActionResult InsertHolidayRequest(HolidayRequestViewModel holiday)
         {
-            var startDate = holiday.StartDate;
-            
-            var endDate = holiday.EndDate;
-            
-            var requestorName = holiday.RequesterName;
+           
+            _holidayService.AddHoliday(holiday);
 
-            var holidayType = holiday.HolidayType;
-
-
-            using (var db = new DataContext())
-            {
-                var holidayRequest = db.Set<HolidayRequest>();
-                holidayRequest.Add(new HolidayRequest
-                {
-                    EndDate = endDate,
-                    StartDate = startDate,
-                    RequesterName = requestorName,
-                    HolidayType = holidayType
-
-                });
-
-                db.SaveChanges();
-            }
-
-
-                return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");
         }
-
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
