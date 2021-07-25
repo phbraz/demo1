@@ -22,7 +22,7 @@ namespace demo1.Services
         {
             
 
-            return _dataContext.HolidayRequests.GroupBy(x => x.RequesterName)/*Select(x => x.Sum(y => y.EndDate.Subtract(y.StartDate).TotalDays == 0 ? 1 : y.EndDate.Subtract(y.StartDate).TotalDays))*/
+            return _dataContext.HolidayRequests.GroupBy(x => x.RequesterName)
                 .Select(x => new HolidayRequestViewModel
                 {
                     //EndDate = null,
@@ -33,6 +33,20 @@ namespace demo1.Services
                     RemainingHolidays = 28 - x.Sum(y =>  EF.Functions.DateDiffDay(y.StartDate, y.EndDate)) 
                 }
             );
+        }
+
+        public IEnumerable<HolidayRequestViewModel> GetFullHolidayHistory(string requesterName)
+        {
+            return _dataContext.HolidayRequests
+                .Select(x => new HolidayRequestViewModel
+                {
+                    EndDate = x.EndDate,
+                    HolidayType = x.HolidayType,
+                    RequesterName = x.RequesterName,
+                    StartDate = x.StartDate
+
+                }).Where(x => x.RequesterName == requesterName);
+
         }
 
 

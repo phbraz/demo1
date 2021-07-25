@@ -44,6 +44,17 @@ namespace demo1.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult SpecificHolidayRequest(string reqName)
+        {
+            var vm = new HomeIndexViewModel
+            {
+                holidayRequests = _holidayService.GetFullHolidayHistory(reqName)
+            };
+
+            return View(vm);
+        }
+
         [HttpPost]
         public IActionResult InsertHolidayRequest(HolidayRequestViewModel holiday)
         {
