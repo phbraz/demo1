@@ -10,7 +10,9 @@ namespace demo1.Services
         public string RequesterName { get; set; }
         public HolidayType HolidayType { get; set; }
 
-        public int TotalHolidays { get; set; }
+        public double TotalHolidays { get; set; }
+
+        public double RemainingHolidays { get; set; }
 
     }
 }

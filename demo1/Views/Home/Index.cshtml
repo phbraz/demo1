@@ -13,6 +13,8 @@
             <th>StartDate</th>
             <th>EndDate</th>
             <th>Type</th>
+            <th>TotalDays</th>
+            <th>Remainingdays</th>
         </tr>
         @{ 
             foreach (var i in Model.holidayRequests)
@@ -22,6 +24,8 @@
                     <td>@i.StartDate.ToShortDateString()</td>
                     <td>@i.EndDate.ToShortDateString()</td>
                     <td>@i.HolidayType</td>
+                    <td>@i.TotalHolidays</td>
+                    <td>@i.RemainingHolidays</td>
                 </tr>
             }
         }

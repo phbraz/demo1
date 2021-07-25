@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using demo1.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace demo1.Services
 {
@@ -17,18 +18,21 @@ namespace demo1.Services
         }
 
 
-        public List<HolidayRequestViewModel> GetAll()
+        public IEnumerable<HolidayRequestViewModel> GetAll()
         {
+            
 
-
-            return _dataContext.HolidayRequests.Select(x => new HolidayRequestViewModel 
-            {
-                EndDate = x.EndDate,
-                HolidayType = x.HolidayType,
-                RequesterName = x.RequesterName,
-                StartDate = x.StartDate
-            }
-            ).ToList();
+            return _dataContext.HolidayRequests.GroupBy(x => x.RequesterName)/*Select(x => x.Sum(y => y.EndDate.Subtract(y.StartDate).TotalDays == 0 ? 1 : y.EndDate.Subtract(y.StartDate).TotalDays))*/
+                .Select(x => new HolidayRequestViewModel
+                {
+                    //EndDate = null,
+                    //HolidayType = null,
+                    RequesterName = x.Key,
+                    //StartDate = null,
+                    TotalHolidays = x.Sum(y => EF.Functions.DateDiffDay(y.StartDate, y.EndDate)),
+                    RemainingHolidays = 28 - x.Sum(y =>  EF.Functions.DateDiffDay(y.StartDate, y.EndDate)) 
+                }
+            );
         }
 
 
