@@ -2,6 +2,16 @@
 
 @{
     ViewData["Title"] = "Home Page";
+
+}
+
+@if (TempData["Message"] != null)
+{
+    <script type="text/javascript">
+         alert("@TempData["Message"].ToString()");
+    </script>
+
+
 }
 
 <div class="text-center">
@@ -13,7 +23,7 @@
             <th>TotalDays</th>
             <th>Remainingdays</th>
         </tr>
-        @{ 
+        @{
             foreach (var i in Model.holidayRequests)
             {
                 <tr>

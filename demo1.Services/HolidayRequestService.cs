@@ -35,7 +35,7 @@ namespace demo1.Services
             );
         }
 
-        public IEnumerable<HolidayRequestViewModel> GetFullHolidayHistory(string requesterName)
+        public IEnumerable<HolidayRequestViewModel> GetFullHolidayHistory(string reqName)
         {
             return _dataContext.HolidayRequests
                 .Select(x => new HolidayRequestViewModel
@@ -45,25 +45,61 @@ namespace demo1.Services
                     RequesterName = x.RequesterName,
                     StartDate = x.StartDate
 
-                }).Where(x => x.RequesterName == requesterName);
+                }).Where(x => x.RequesterName == reqName);
 
         }
 
 
-        public void AddHoliday(HolidayRequestViewModel holiday)
+        public bool AddHoliday(HolidayRequestViewModel holiday)
         {
-            
-            var holidayRequest = _dataContext.Set<HolidayRequest>();
-            holidayRequest.Add(new HolidayRequest
+
+            var allowHolidayrequest = AllowHolidays(holiday.RequesterName, holiday.StartDate, holiday.EndDate);
+
+            if (allowHolidayrequest)
             {
-                EndDate = holiday.EndDate,
-                StartDate = holiday.StartDate,
-                RequesterName = holiday.RequesterName,
-                HolidayType = holiday.HolidayType
+                var holidayRequest = _dataContext.Set<HolidayRequest>();
+                holidayRequest.Add(new HolidayRequest
+                {
+                    EndDate = holiday.EndDate,
+                    StartDate = holiday.StartDate,
+                    RequesterName = holiday.RequesterName,
+                    HolidayType = holiday.HolidayType
 
-            });
+                });
 
-            _dataContext.SaveChanges();            
-        } 
+                _dataContext.SaveChanges();
+
+            }
+
+            return allowHolidayrequest;
+                             
+        }
+        
+        public bool AllowHolidays(string reqName, DateTime startDate, DateTime endDate)
+        {
+            var result = true;
+
+            var list = GetAll();
+
+            var daysRequested = (endDate - startDate).TotalDays; //from current request
+
+            foreach (var i in list)
+            {
+                if (i.RequesterName == reqName)
+                {
+                    if (i.RemainingHolidays <= 0 || daysRequested > i.RemainingHolidays)
+                    {
+                        result = false;
+
+                    }
+
+                }
+
+            }
+
+            return result;
+
+        }
+
     }
 }

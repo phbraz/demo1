@@ -58,9 +58,15 @@ namespace demo1.Controllers
         [HttpPost]
         public IActionResult InsertHolidayRequest(HolidayRequestViewModel holiday)
         {
-           
-            _holidayService.AddHoliday(holiday);
 
+            if (!_holidayService.AddHoliday(holiday))
+            {
+
+                TempData["Message"] = "Requester does not have any remaining holidays or request exceed the remaining days";
+                return RedirectToAction("Index", "Home");
+
+            }
+                                          
             return RedirectToAction("Index", "Home");
         }
 
