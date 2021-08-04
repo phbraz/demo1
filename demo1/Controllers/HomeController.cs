@@ -58,6 +58,11 @@ namespace demo1.Controllers
         [HttpPost]
         public IActionResult InsertHolidayRequest(HolidayRequestViewModel holiday)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("AddHolidayRequest");
+
+            }
 
             if (!_holidayService.AddHoliday(holiday))
             {

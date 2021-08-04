@@ -10,18 +10,19 @@
 
             <label class="col-sm-2 col-form-label col-form-label-sm">Requester Name</label>
             <div class="col-sm-10">
-                
+
                 @Html.TextBoxFor(m => m.RequesterName, new { @class = "form-control form-control-sm" })
-                
+
             </div>
             <br />
-
+            <span asp-validation-for="StartDate" class="text-danger"></span>
             <label for="RStartDate" class="col-sm-2 col-form-label col-form-label-sm">Start Date</label>
             <div class="col-sm-10">
                 @Html.TextBoxFor(m => m.StartDate, new { @class = "form-control form-control-sm", @type = "date" })
             </div>
             <br />
 
+            <span asp-validation-for="EndDate" class="text-danger"></span>
             <label for="REndDate" class="col-sm-2 col-form-label col-form-label-sm">End Date</label>
             <div class="col-sm-10">
                 @Html.TextBoxFor(m => m.EndDate, new { @class = "form-control form-control-sm", @type = "date" })
@@ -30,7 +31,7 @@
 
             <label for="holidayType" class="col-sm-2 col-form-label col-form-label-sm">Holiday Type</label>
             <div class="col-sm-10">
-                
+
                 @Html.DropDownListFor(m => m.HolidayType,
                     new SelectList(
                         new List<SelectListItem>
@@ -43,8 +44,8 @@
                         "Value",
                         "Text"
 
-                ),new { @class = "form-control form-control-sm" })
-                                
+                ), new { @class = "form-control form-control-sm" })
+
             </div>
             <br />
         </div>
