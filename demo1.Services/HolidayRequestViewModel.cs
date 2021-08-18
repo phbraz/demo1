@@ -17,5 +17,7 @@ namespace demo1.Services
 
         public double RemainingHolidays { get; set; }
 
+        public ApprovalStatus Status { get; set; }
+
     }
 }

@@ -18,6 +18,8 @@ namespace demo1.Data
 
         public DbSet<HolidayRequest> HolidayRequests { get; set; }
 
+        public DbSet<HolidayRequestApproval> HolidayRequestApprovals { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(

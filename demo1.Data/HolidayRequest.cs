@@ -16,6 +16,8 @@ namespace demo1.Data
         public string RequesterName { get; set; }
         public HolidayType HolidayType { get; set; }
 
+        public ICollection<HolidayRequestApproval> HolidayRequestApprovals { get; set; }
+
 
     }
 

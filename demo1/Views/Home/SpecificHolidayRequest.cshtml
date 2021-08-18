@@ -13,7 +13,8 @@
             <th>Requester</th>
             <th>StartDate</th>
             <th>EndDate</th>
-            <th>Type</th>           
+            <th>Type</th>
+            <th>Status</th>
         </tr>
         @{
             foreach (var i in Model.holidayRequests)
@@ -22,7 +23,8 @@
                     <td>@i.RequesterName</td>
                     <td>@i.StartDate.ToShortDateString()</td>
                     <td>@i.EndDate.ToShortDateString()</td>
-                    <td>@i.HolidayType</td>                    
+                    <td>@i.HolidayType</td>
+                    <td>@i.Status</td>
                 </tr>
             }
         }

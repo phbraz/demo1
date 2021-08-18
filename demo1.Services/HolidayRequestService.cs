@@ -43,7 +43,12 @@ namespace demo1.Services
                     EndDate = x.EndDate,
                     HolidayType = x.HolidayType,
                     RequesterName = x.RequesterName,
-                    StartDate = x.StartDate
+                    StartDate = x.StartDate,
+                    Status = x.HolidayRequestApprovals.Any(x => x.Status == ApprovalStatus.Approved) 
+                        ? ApprovalStatus.Approved 
+                        :  x.HolidayRequestApprovals.Any(x => x.Status == ApprovalStatus.Rejected) 
+                            ? ApprovalStatus.Rejected 
+                            : ApprovalStatus.Pending
 
                 }).Where(x => x.RequesterName == reqName);
 
