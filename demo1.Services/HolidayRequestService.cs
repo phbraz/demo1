@@ -25,10 +25,7 @@ namespace demo1.Services
             return _dataContext.HolidayRequests.GroupBy(x => x.RequesterName)
                 .Select(x => new HolidayRequestViewModel
                 {
-                    //EndDate = null,
-                    //HolidayType = null,
-                    RequesterName = x.Key,
-                    //StartDate = null,
+                    RequesterName = x.Key,                    
                     TotalHolidays = x.Sum(y => EF.Functions.DateDiffDay(y.StartDate, y.EndDate)),
                     RemainingHolidays = 28 - x.Sum(y =>  EF.Functions.DateDiffDay(y.StartDate, y.EndDate)) 
                 }
@@ -104,6 +101,16 @@ namespace demo1.Services
 
             return result;
 
+        }
+
+        public IEnumerable<HolidayRequestViewModel> GetRequestersNames()
+        {
+            return _dataContext.HolidayRequests.GroupBy(x => x.RequesterName)
+                .Select(x => new HolidayRequestViewModel
+                    {
+                        RequesterName = x.Key                        
+                    }
+                );            
         }
 
     }

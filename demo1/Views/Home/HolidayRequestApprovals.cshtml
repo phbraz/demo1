@@ -1,0 +1,35 @@
+﻿@model demo1.Services.HolidayRequestApprovalViewModel;
+
+@{
+    ViewData["Title"] = "Home Page";
+
+}
+
+
+<div class="form-floating">
+    <select class="form-select" id="floatingSelect" aria-label="Floating label select example" onchange="pickRequester(this)">
+        <option selected>Open this select menu</option>
+        @{ 
+            foreach(var i in Model.RequesterName)
+            {
+                <option value="@i.RequesterName">@i.RequesterName</option>
+            }
+
+        }        
+    </select>
+    <label for="floatingSelect">Requester</label>
+</div>
+
+
+
+
+<script>
+
+    function pickRequester(select) {
+        var selectedItem = select.options[select.selectedIndex].text;        
+
+        //Add the request post 
+        //window.location = "/home/GetTest?reqName=" + selectedItem
+        
+    }
+</script>

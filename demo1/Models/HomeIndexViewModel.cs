@@ -8,5 +8,7 @@ namespace demo1.Models
     public class HomeIndexViewModel
     {
         public IEnumerable<HolidayRequestViewModel> holidayRequests { get; set; }
+
+        public IEnumerable<HolidayRequestApprovalViewModel> holidayRequestApproval { get; set; }
     }
 }

@@ -75,6 +75,23 @@ namespace demo1.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public IActionResult HolidayRequestApprovals()
+        {
+            var vm = new HolidayRequestApprovalViewModel
+            {
+                RequesterName = _holidayService.GetRequestersNames()
+                
+                    
+            };
+
+            return View(vm);
+        }
+
+
+
+
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
