@@ -52,20 +52,8 @@
 
 
 <script>
-
-
-
-
     function pickRequester(select) {
         var selectedItem = select.options[select.selectedIndex].text;
-
-
         window.location.href = "HolidayRequestApprovals?reqName=" + selectedItem;
-
-        //$.ajax("GetHolidayDetailsForRequester?reqName=" + selectedItem).then(function (data) {
-        //    console.log(data);
-        //});
-
-
     }
 </script>

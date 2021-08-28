@@ -18,6 +18,8 @@ namespace demo1.Data
 
         public ICollection<HolidayRequestApproval> HolidayRequestApprovals { get; set; }
 
+        public virtual User User { get; set; }
+
 
     }
 

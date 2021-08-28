@@ -1,0 +1,62 @@
+﻿@model demo1.Services.UserHolidayRequestViewModel;
+
+@{
+    ViewData["Title"] = "Home Page";
+
+}
+
+@if (TempData["Message"] != null)
+{
+    <script type="text/javascript">
+        alert("@TempData["Message"].ToString()");
+    </script>
+}
+
+
+
+<div class="container-sm">
+
+    <form method="POST" asp-controller="home" asp-action="LoginUser" id="login">
+        <div class="mb-3">
+            <label for="userName" class="form-label">User Name</label>
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @type = "text", @id = "userName" })
+        </div>
+
+        <div class="mb-3">
+            <label for="userPassword" class="form-label">Password</label>
+            @Html.TextBoxFor(m => m.Password, new { @class = "form-control", @type = "password", @id = "userPassword" })
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button id="registerBtn" type="button" class="btn btn-secondary">Register</button>
+    </form>
+
+
+    <form method="POST" asp-controller="home" asp-action="RegisterUser" id="register" style="display:none">
+        <div class="mb-3">
+            <label for="regUserName" class="form-label">User Name</label>
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @type = "text", @id = "regUserName" })
+        </div>
+
+        <div class="mb-3">
+            <label for="FirstName" class="form-label">First Name</label>
+            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @type = "text", @id = "FirstName" })
+        </div>
+
+
+        <div class="mb-3">
+            <label for="LastName" class="form-label">Last Name</label>
+            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @type = "text", @id = "LastName" })
+        </div>
+
+        <div class="mb-3">
+            <label for="regUserPassword" class="form-label">Password</label>
+            @Html.TextBoxFor(m => m.Password, new { @class = "form-control", @type = "password", @id = "regUserPassword" })
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button id="loginAreaBtn" type="button" class="btn btn-secondary">Login Area</button>
+
+    </form>
+
+</div>

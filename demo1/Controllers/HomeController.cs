@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using demo1.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace demo1.Controllers
 {
@@ -24,6 +25,44 @@ namespace demo1.Controllers
             _holidayService = new HolidayRequestService();            
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult LoginPage()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult LoginUser(UserHolidayRequestViewModel user)
+        {
+            if (_holidayService.LoginUser(user))
+            {
+
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return RedirectToAction("LoginPage", "Home");
+            }           
+
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult RegisterUser(UserHolidayRequestViewModel user)
+        {
+            _holidayService.CreateUser(user);
+
+            TempData["Message"] = "User has been created, please login";
+
+            return RedirectToAction("LoginPage", "Home");
+
+        }
+
+
+        [HttpGet]
+        [Authorize]
         public IActionResult Index()
         {
             var vm = new HomeIndexViewModel
@@ -39,6 +78,8 @@ namespace demo1.Controllers
             return View();
         }
 
+        [HttpGet]
+        [Authorize]
         public IActionResult AddHolidayRequest()
         {
             return View();
@@ -56,6 +97,7 @@ namespace demo1.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult InsertHolidayRequest(HolidayRequestViewModel holiday)
         {
             if (!ModelState.IsValid)
@@ -75,7 +117,10 @@ namespace demo1.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+
+
         [HttpGet]
+        [Authorize]
         public IActionResult HolidayRequestApprovals(string ? reqName = null)
         {
            
@@ -104,7 +149,9 @@ namespace demo1.Controllers
             return View(vm);
         }
 
+
         [HttpGet]
+        [Authorize]
         public IActionResult GetHolidayDetailsForRequester(string reqName)
         {
             var query = _holidayService.GetFullHolidayHistory(reqName, ApprovalStatus.Pending)

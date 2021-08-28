@@ -10,5 +10,9 @@ namespace demo1.Models
         public IEnumerable<HolidayRequestViewModel> holidayRequests { get; set; }
 
         public IEnumerable<HolidayRequestApprovalViewModel> holidayRequestApproval { get; set; }
+
+        public IEnumerable<UserHolidayRequestViewModel> userHolidayRequests { get; set; }
+
+
     }
 }

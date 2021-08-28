@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using demo1.Data;
@@ -118,6 +119,86 @@ namespace demo1.Services
                         RequesterName = x.Key                        
                     }
                 );            
+        }
+
+
+        public IEnumerable<UserHolidayRequestViewModel> GetUser(UserHolidayRequestViewModel user)
+        {
+            return _dataContext.Users
+                .Select(x => new UserHolidayRequestViewModel
+                {
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    Password = x.Password,
+                    UserName = x.UserName
+
+
+                }).Where(x => x.UserName == user.UserName);
+        }
+
+        public void CreateUser(UserHolidayRequestViewModel user)
+        {
+            //encrypting the pass
+
+            byte[] salt;
+            new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+
+            var encrypt = new Rfc2898DeriveBytes(user.Password, salt, 10000);
+            byte[] hash = encrypt.GetBytes(20);
+
+            //combine salt and hashed password
+
+            byte[] hashBytes = new byte[36];
+            Array.Copy(salt, 0, hashBytes, 0, 16);
+            Array.Copy(hash, 0, hashBytes, 16, 20);
+
+            var savePassowordHash = Convert.ToBase64String(hashBytes);
+
+            var addUserRequest = _dataContext.Set<User>();
+
+            addUserRequest.Add(new User
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                CreatedDate = DateTime.Now,
+                UserName = user.UserName,
+                Password = savePassowordHash
+
+               
+            });
+
+            _dataContext.SaveChanges();
+            
+        }
+
+
+        public bool LoginUser(UserHolidayRequestViewModel user)
+        {
+            var savedHashPass = GetUser(user).First().Password.ToString();
+
+            
+            byte[] hashBytes = Convert.FromBase64String(savedHashPass);
+
+            byte[] salt = new byte[16];
+            Array.Copy(hashBytes, 0, salt, 0, 16);
+            
+            // Compute the hash on the password the user entered
+            
+            var encrypt = new Rfc2898DeriveBytes(user.Password, salt, 10000);
+            byte[] hash = encrypt.GetBytes(20);
+            
+            // Compare the results
+            for (int i = 0; i < 20; i++)
+            {
+                if (hashBytes[i + 16] != hash[i])
+                {
+                    throw new UnauthorizedAccessException();
+
+                }
+
+            }
+
+            return true;
         }
 
     }

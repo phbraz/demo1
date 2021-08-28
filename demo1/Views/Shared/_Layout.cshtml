@@ -55,3 +55,20 @@
 </body>
 
 </html>
+
+
+
+<script>
+    //hide register an user 
+
+    $('#registerBtn').click(function () {
+        $('#login').hide();
+        $('#register').show();
+    });
+
+    //back to login form
+    $('#loginAreaBtn').click(function () {
+        $('#register').hide();
+        $('#login').show();
+    })
+</script>
