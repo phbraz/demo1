@@ -32,9 +32,9 @@ namespace demo1.Services
             );
         }
 
-        public IEnumerable<HolidayRequestViewModel> GetFullHolidayHistory(string reqName)
+        public IEnumerable<HolidayRequestViewModel> GetFullHolidayHistory(string reqName, ApprovalStatus ? status = null)
         {
-            return _dataContext.HolidayRequests
+            var query =  _dataContext.HolidayRequests
                 .Select(x => new HolidayRequestViewModel
                 {
                     EndDate = x.EndDate,
@@ -48,6 +48,13 @@ namespace demo1.Services
                             : ApprovalStatus.Pending
 
                 }).Where(x => x.RequesterName == reqName);
+            
+            if (status != null)
+            {
+                query = query.Where(x => x.Status == status);
+
+            }
+            return query;
 
         }
 

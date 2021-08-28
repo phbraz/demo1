@@ -45,11 +45,11 @@ namespace demo1.Controllers
         }
 
         [HttpGet]
-        public IActionResult SpecificHolidayRequest(string reqName)
+        public IActionResult SpecificHolidayRequest(string reqName, ApprovalStatus ? status = null)
         {
             var vm = new HomeIndexViewModel
             {
-                holidayRequests = _holidayService.GetFullHolidayHistory(reqName)
+                holidayRequests = _holidayService.GetFullHolidayHistory(reqName, status)
             };
 
             return View(vm);
@@ -76,16 +76,49 @@ namespace demo1.Controllers
         }
 
         [HttpGet]
-        public IActionResult HolidayRequestApprovals()
+        public IActionResult HolidayRequestApprovals(string ? reqName = null)
         {
+           
             var vm = new HolidayRequestApprovalViewModel
             {
                 RequesterName = _holidayService.GetRequestersNames()
-                
-                    
+                                    
             };
 
+
+            if (reqName != null)
+            {
+                    vm.PendingHolidays = _holidayService.GetFullHolidayHistory(reqName, ApprovalStatus.Pending)
+                    .Select(
+                        x => new PendingHolidayRequestViewModel
+                        {
+                            EndDate = x.EndDate,
+                            StartDate = x.StartDate,
+                            RequesterName = x.RequesterName
+                        }
+                        );
+
+            }
+
+
             return View(vm);
+        }
+
+        [HttpGet]
+        public IActionResult GetHolidayDetailsForRequester(string reqName)
+        {
+            var query = _holidayService.GetFullHolidayHistory(reqName, ApprovalStatus.Pending)
+                    .Select(
+                        x => new PendingHolidayRequestViewModel
+                        {
+                            EndDate = x.EndDate,
+                            StartDate = x.StartDate,
+                            RequesterName = x.RequesterName
+                        }
+                        );
+
+            return Json(query);
+        
         }
 
 

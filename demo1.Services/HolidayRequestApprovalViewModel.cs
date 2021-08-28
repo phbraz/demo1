@@ -11,15 +11,16 @@ namespace demo1.Services
     public class HolidayRequestApprovalViewModel
     {
         public IEnumerable<HolidayRequestViewModel> RequesterName { get; set; }
-        public int HolidayRequestId { get; set; }
+        //public int HolidayRequestId { get; set; }
+        //
+        //[Required(ErrorMessage = "Created Date is required")]
+        //public DateTime CreatedDate { get; set; }
+        //
+        //public string Note { get; set; }
+        //
+        //public ApprovalStatus Status { get; set; }
 
-        [Required(ErrorMessage = "Created Date is required")]
-        public DateTime CreatedDate { get; set; }
-        
-        public string Note { get; set; }
-        
-        public ApprovalStatus Status { get; set; }
-
+        public IEnumerable<PendingHolidayRequestViewModel> PendingHolidays { get; set; }
 
 
     }
