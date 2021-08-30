@@ -6,9 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using demo1.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace demo1.Controllers
 {
@@ -18,27 +21,52 @@ namespace demo1.Controllers
 
         private readonly HolidayRequestService _holidayService;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly TokenService _tokenService;
+
+        public IConfiguration _configuration;
+
+        public HomeController(ILogger<HomeController> logger, IConfiguration config)
         {
             _logger = logger;
 
-            _holidayService = new HolidayRequestService();            
+            _holidayService = new HolidayRequestService();
+
+            _configuration = config;
+
+            _tokenService = new TokenService();
+
         }
 
         [HttpGet]
         [AllowAnonymous]
         public IActionResult LoginPage()
         {
-            return View();
+            if (ValidateToken())
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                var vm = new UserHolidayRequestViewModel
+                {
+                    UserName = null,
+                    Token = null
+                };
+
+                return View(vm);
+
+            }            
         }
 
         [HttpPost]
         [AllowAnonymous]
         public IActionResult LoginUser(UserHolidayRequestViewModel user)
         {
-            if (_holidayService.LoginUser(user))
-            {
+            var userDetails = _holidayService.LoginUser(user).First();
 
+            if (userDetails != null)
+            {
+                CreateAuthToken(userDetails);
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -62,15 +90,22 @@ namespace demo1.Controllers
 
 
         [HttpGet]
-        [Authorize]
         public IActionResult Index()
         {
-            var vm = new HomeIndexViewModel
-            {
-                holidayRequests = _holidayService.GetAll()
-            };
 
-            return View(vm);                
+            if (ValidateToken())
+            {
+                var vm = new HomeIndexViewModel
+                {
+                    userHolidayRequests = _holidayService.GetholidayPerCurrent(null)
+                };
+
+                return View(vm);
+            }
+            else
+            {
+                return RedirectToAction("LoginPage", "Home");
+            }
         }
 
         public IActionResult Privacy()
@@ -168,9 +203,40 @@ namespace demo1.Controllers
         
         }
 
+        //Generate token
+        public void CreateAuthToken(UserHolidayRequestViewModel user)
+        {
+            //Grab Token 
+            var myToken = _tokenService.GenerateToken(user, _configuration);
+
+            //Convert token to string bearer
+            var tokenStr = new JwtSecurityTokenHandler().WriteToken(myToken).ToString();
 
 
+            //create a new cookie with that token string
+            HttpContext.Response.Cookies.Append("Authorization", tokenStr);
 
+            user.Token = tokenStr;
+
+
+        }
+
+
+        //Need to find a better way to validate the token for now this one might work.
+        public bool  ValidateToken()
+        {
+            var authCookie = HttpContext.Request.Cookies
+                .Where(x => x.Key == "Authorization").FirstOrDefault();
+
+            if (authCookie.Value !=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

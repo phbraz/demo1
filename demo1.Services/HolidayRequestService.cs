@@ -33,6 +33,20 @@ namespace demo1.Services
             );
         }
 
+        public IEnumerable<UserHolidayRequestViewModel> GetholidayPerCurrent(string userName)
+        {
+
+
+            return _dataContext.HolidayRequests.GroupBy(x => x.RequesterName)
+                .Select(x => new UserHolidayRequestViewModel
+                {
+                    UserName = x.Key,
+                    TotalHolidays = x.Sum(y => EF.Functions.DateDiffDay(y.StartDate, y.EndDate)),
+                    RemainingHolidays = 28 - x.Sum(y => EF.Functions.DateDiffDay(y.StartDate, y.EndDate))
+                }
+            ).Where(x => x.UserName == userName);
+        }
+
         public IEnumerable<HolidayRequestViewModel> GetFullHolidayHistory(string reqName, ApprovalStatus ? status = null)
         {
             var query =  _dataContext.HolidayRequests
@@ -122,11 +136,13 @@ namespace demo1.Services
         }
 
 
-        public IEnumerable<UserHolidayRequestViewModel> GetUser(UserHolidayRequestViewModel user)
+        public IEnumerable<UserHolidayRequestViewModel> GetUser(UserHolidayRequestViewModel ? user = null)
         {
             return _dataContext.Users
                 .Select(x => new UserHolidayRequestViewModel
                 {
+                    UserId = x.Id,
+                    IsAdmin = x.IsAdmin,
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     Password = x.Password,
@@ -172,9 +188,12 @@ namespace demo1.Services
         }
 
 
-        public bool LoginUser(UserHolidayRequestViewModel user)
+        public IEnumerable<UserHolidayRequestViewModel> LoginUser(UserHolidayRequestViewModel user)
         {
-            var savedHashPass = GetUser(user).First().Password.ToString();
+            var userData = GetUser(user);
+
+
+            var savedHashPass = userData.First().Password.ToString();
 
             
             byte[] hashBytes = Convert.FromBase64String(savedHashPass);
@@ -198,7 +217,7 @@ namespace demo1.Services
 
             }
 
-            return true;
+            return userData;
         }
 
     }

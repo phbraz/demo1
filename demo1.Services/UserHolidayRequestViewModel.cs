@@ -8,6 +8,7 @@ namespace demo1.Services
 {
     public class UserHolidayRequestViewModel
     {
+        //user details
         public int UserId { get; set; }
 
         public string UserName { get; set; }
@@ -19,6 +20,14 @@ namespace demo1.Services
         public string Password { get; set; }
 
         public bool IsAdmin { get; set; }
+
+        public string Token { get; set; }
+
+        //Holiday 
+        
+        public double TotalHolidays { get; set; }
+
+        public double RemainingHolidays { get; set; }
 
     }
 }
