@@ -4,12 +4,12 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using demo1.Data;
 
 namespace demo1.Services
 {
     public class TokenService
     {
-        //public IConfiguration _configuration;
 
         public TokenService()
         {
@@ -39,8 +39,6 @@ namespace demo1.Services
                 claims,
                 expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: signIn);
-
-            //var tokenString = new JwtSecurityTokenHandler().WriteToken(token).ToString();
            
             return token;
 

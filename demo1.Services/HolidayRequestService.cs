@@ -37,10 +37,10 @@ namespace demo1.Services
         {
 
 
-            return _dataContext.HolidayRequests.GroupBy(x => x.RequesterName)
+            return _dataContext.HolidayRequests.GroupBy(x => x.UserId)
                 .Select(x => new UserHolidayRequestViewModel
                 {
-                    UserName = x.Key,
+                    UserId = x.Key,
                     TotalHolidays = x.Sum(y => EF.Functions.DateDiffDay(y.StartDate, y.EndDate)),
                     RemainingHolidays = 28 - x.Sum(y => EF.Functions.DateDiffDay(y.StartDate, y.EndDate))
                 }
@@ -79,18 +79,31 @@ namespace demo1.Services
 
             var allowHolidayrequest = AllowHolidays(holiday.RequesterName, holiday.StartDate, holiday.EndDate);
 
+
             if (allowHolidayrequest)
             {
-                var holidayRequest = _dataContext.Set<HolidayRequest>();
-                holidayRequest.Add(new HolidayRequest
+                var holidayRequestDataContext = _dataContext.Set<HolidayRequest>();
+
+                
+                var userName = new User
+                {
+                    UserName = holiday.UserName
+                };
+
+                //fetching currentUser Details
+                var userDetails = GetUser(userName).FirstOrDefault(); 
+
+
+                var holidaRequest = new HolidayRequest
                 {
                     EndDate = holiday.EndDate,
-                    StartDate = holiday.StartDate,
+                    StartDate = holiday.EndDate,
                     RequesterName = holiday.RequesterName,
-                    HolidayType = holiday.HolidayType
+                    HolidayType = holiday.HolidayType,
+                    UserId = userDetails.Id
+                };
 
-                });
-
+                holidayRequestDataContext.Add(holidaRequest);
                 _dataContext.SaveChanges();
 
             }
@@ -136,17 +149,18 @@ namespace demo1.Services
         }
 
 
-        public IEnumerable<UserHolidayRequestViewModel> GetUser(UserHolidayRequestViewModel ? user = null)
+        public IEnumerable<User> GetUser(User ? user = null)
         {
             return _dataContext.Users
-                .Select(x => new UserHolidayRequestViewModel
+                .Select(x => new User
                 {
-                    UserId = x.Id,
+                    Id = x.Id,
                     IsAdmin = x.IsAdmin,
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     Password = x.Password,
-                    UserName = x.UserName
+                    UserName = x.UserName,
+                    CreatedDate = x.CreatedDate
 
 
                 }).Where(x => x.UserName == user.UserName);
@@ -188,12 +202,27 @@ namespace demo1.Services
         }
 
 
-        public IEnumerable<UserHolidayRequestViewModel> LoginUser(UserHolidayRequestViewModel user)
+        public UserHolidayRequestViewModel LoginUser(UserHolidayRequestViewModel user)
         {
-            var userData = GetUser(user);
+            var userVm = new User
+            {
+                UserName = user.UserName
+            };
+
+            var userData = GetUser(userVm).FirstOrDefault();
+
+            var vm = new UserHolidayRequestViewModel
+            {
+                FirstName = userData.FirstName,
+                LastName = userData.LastName,
+                IsAdmin = userData.IsAdmin,
+                UserName = userData.UserName,
+                UserId = userData.Id
+
+            };
 
 
-            var savedHashPass = userData.First().Password.ToString();
+            var savedHashPass = userData.Password.ToString();
 
             
             byte[] hashBytes = Convert.FromBase64String(savedHashPass);
@@ -217,7 +246,7 @@ namespace demo1.Services
 
             }
 
-            return userData;
+            return vm;
         }
 
     }

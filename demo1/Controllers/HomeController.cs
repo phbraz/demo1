@@ -62,7 +62,8 @@ namespace demo1.Controllers
         [AllowAnonymous]
         public IActionResult LoginUser(UserHolidayRequestViewModel user)
         {
-            var userDetails = _holidayService.LoginUser(user).First();
+
+            var userDetails = _holidayService.LoginUser(user);
 
             if (userDetails != null)
             {
@@ -88,6 +89,28 @@ namespace demo1.Controllers
 
         }
 
+        [HttpGet]
+        public IActionResult LogOut()
+        {
+            if (ValidateToken())
+            {
+                //cleaning cookies 
+
+                HttpContext.Response.Cookies.Delete("Authorization");
+                HttpContext.Response.Cookies.Delete("user");
+                HttpContext.Response.Cookies.Delete("permission");
+
+                return RedirectToAction("LoginPage", "Home");
+
+
+            }
+            else
+            {
+                return RedirectToAction("LoginPage", "Home");
+            }
+
+        }
+
 
         [HttpGet]
         public IActionResult Index()
@@ -95,9 +118,12 @@ namespace demo1.Controllers
 
             if (ValidateToken())
             {
+                var user = HttpContext.Request.Cookies
+                .Where(x => x.Key == "user").FirstOrDefault();
+
                 var vm = new HomeIndexViewModel
                 {
-                    userHolidayRequests = _holidayService.GetholidayPerCurrent(null)
+                    userHolidayRequests = _holidayService.GetholidayPerCurrent(user.Value)
                 };
 
                 return View(vm);
@@ -114,60 +140,85 @@ namespace demo1.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public IActionResult AddHolidayRequest()
         {
-            return View();
+            if (ValidateToken())
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("LoginPage", "Home");
+            }
         }
 
         [HttpGet]
         public IActionResult SpecificHolidayRequest(string reqName, ApprovalStatus ? status = null)
         {
-            var vm = new HomeIndexViewModel
+            if (ValidateToken())
             {
-                holidayRequests = _holidayService.GetFullHolidayHistory(reqName, status)
-            };
+                var vm = new HomeIndexViewModel
+                {
+                    holidayRequests = _holidayService.GetFullHolidayHistory(reqName, status)
+                };
 
-            return View(vm);
+                return View(vm);
+            }
+            else
+            {
+                return RedirectToAction("LoginPage", "Home");
+            }
         }
 
         [HttpPost]
-        [Authorize]
         public IActionResult InsertHolidayRequest(HolidayRequestViewModel holiday)
         {
-            if (!ModelState.IsValid)
+            if (ValidateToken())
             {
-                return View("AddHolidayRequest");
+                //catching values from cookies it seems easier than through  view
+                var fullName = HttpContext.Request.Cookies
+                .Where(x => x.Key == "fullname").FirstOrDefault();
 
-            }
+                var userName = HttpContext.Request.Cookies
+                .Where(x => x.Key == "user").FirstOrDefault();
 
-            if (!_holidayService.AddHoliday(holiday))
-            {
 
-                TempData["Message"] = "Requester does not have any remaining holidays or request exceed the remaining days";
+
+
+
+                holiday.UserName = userName.Value;
+                holiday.RequesterName = fullName.Value;
+
+                if (!_holidayService.AddHoliday(holiday))
+                {
+                    TempData["Message"] = "Requester does not have any remaining holidays or request exceed the remaining days";
+                    return RedirectToAction("Index", "Home");
+                }
                 return RedirectToAction("Index", "Home");
-
             }
-                                          
-            return RedirectToAction("Index", "Home");
+            else
+            {
+                return RedirectToAction("LoginPage", "Home");
+            }
+                                         
         }
 
 
 
         [HttpGet]
-        [Authorize]
         public IActionResult HolidayRequestApprovals(string ? reqName = null)
         {
-           
-            var vm = new HolidayRequestApprovalViewModel
+            if (ValidateToken())
             {
-                RequesterName = _holidayService.GetRequestersNames()
-                                    
-            };
+                var vm = new HolidayRequestApprovalViewModel
+                {
+                    RequesterName = _holidayService.GetRequestersNames()
+
+                };
 
 
-            if (reqName != null)
-            {
+                if (reqName != null)
+                {
                     vm.PendingHolidays = _holidayService.GetFullHolidayHistory(reqName, ApprovalStatus.Pending)
                     .Select(
                         x => new PendingHolidayRequestViewModel
@@ -175,21 +226,23 @@ namespace demo1.Controllers
                             EndDate = x.EndDate,
                             StartDate = x.StartDate,
                             RequesterName = x.RequesterName
-                        }
-                        );
-
+                        });
+                }
+                return View(vm);
             }
-
-
-            return View(vm);
+            else
+            {
+                return RedirectToAction("LoginPage", "Home");
+            } 
         }
 
 
         [HttpGet]
-        [Authorize]
         public IActionResult GetHolidayDetailsForRequester(string reqName)
         {
-            var query = _holidayService.GetFullHolidayHistory(reqName, ApprovalStatus.Pending)
+            if (ValidateToken())
+            {
+                var query = _holidayService.GetFullHolidayHistory(reqName, ApprovalStatus.Pending)
                     .Select(
                         x => new PendingHolidayRequestViewModel
                         {
@@ -199,7 +252,13 @@ namespace demo1.Controllers
                         }
                         );
 
-            return Json(query);
+                return Json(query);
+
+            }
+            else
+            {
+                return RedirectToAction("LoginPage", "Home");
+            }
         
         }
 
@@ -213,8 +272,17 @@ namespace demo1.Controllers
             var tokenStr = new JwtSecurityTokenHandler().WriteToken(myToken).ToString();
 
 
-            //create a new cookie with that token string
+            //create a new cookie with that token string and some user information to retrive later, maybe a better way to handle it? 
             HttpContext.Response.Cookies.Append("Authorization", tokenStr);
+            HttpContext.Response.Cookies.Append("user", user.UserName);
+            HttpContext.Response.Cookies.Append("permission", user.IsAdmin.ToString());
+            HttpContext.Response.Cookies.Append("fullname", user.FirstName + " "+ user.LastName);
+
+
+
+
+
+
 
             user.Token = tokenStr;
 

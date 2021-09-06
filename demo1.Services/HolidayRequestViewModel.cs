@@ -19,5 +19,7 @@ namespace demo1.Services
 
         public ApprovalStatus Status { get; set; }
 
+        public string  UserName { get; set; }
+
     }
 }

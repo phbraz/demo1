@@ -14,24 +14,27 @@
 
 }
 
-<div class="text-center">
-    <h1 class="display-4">Holidays Tracker Summary</h1>
-    <br />
-    <table class="table table-dark">
-        <tr>
-            <th>Requester</th>
-            <th>TotalDays</th>
-            <th>Remainingdays</th>
-        </tr>
-        @{
-            foreach (var i in Model.holidayRequests)
-            {
-                <tr>
-                    <td><a href="home/SpecificHolidayRequest?reqName=@i.RequesterName">@i.RequesterName</a></td>
-                    <td>@i.TotalHolidays</td>
-                    <td>@i.RemainingHolidays</td>
-                </tr>
-            }
-        }
-    </table>
-</div>
+
+@if (Model.userHolidayRequests != null)
+{
+    <div class="text-center">
+        <h1 class="display-4">Holidays Tracker Summary</h1>
+        <br />
+        <table class="table table-dark">
+            <tr>
+                <th>TotalDays</th>
+                <th>Remainingdays</th>
+            </tr>
+                    <tr>
+                        <td>@Model.userHolidayRequests.FirstOrDefault().TotalHolidays</td>
+                        <td>@Model.userHolidayRequests.FirstOrDefault().RemainingHolidays</td>
+                    </tr>
+    
+        </table>
+    </div>
+}
+else
+{
+    <h6 class="display-4" align="Center">No Holidays Taken</h6>
+         
+}

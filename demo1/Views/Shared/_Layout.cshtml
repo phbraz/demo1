@@ -1,4 +1,9 @@
-﻿@model demo1.Services.UserHolidayRequestViewModel;
+﻿@{ 
+    var user = Context.Request.Cookies["user"];
+    var token = Context.Request.Cookies["Authorization"];
+    var isAdmin = Context.Request.Cookies["permission"];
+
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +27,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
 
-                        @if (Model.UserName != null && Model.Token != null && Model.IsAdmin == false)
+                        @if (user != null && token != null && isAdmin == "False")
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -34,7 +39,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AddHolidayRequest">Request Holiday</a>
                             </li>
                         }
-                        @if (Model.UserName != null && Model.Token != null && Model.IsAdmin == true)
+                        @if (user != null && token != null && isAdmin == "True")
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -51,7 +56,7 @@
                             </li>
 
                         }
-                        @if (Model.UserName == null && Model.Token == null)
+                        @if (user == null && token == null)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -62,10 +67,22 @@
                         }
 
                     </ul>
+
+                    @if (user != null)
+                    {
+                        
+                            <ul class="navbar-nav flex-grow-0">
+                                <li class="nav-item">
+                                    <p class="nav-link text-dark text-end" href="#">Hello @user</p>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fle" asp-area="" asp-controller="Home" asp-action="LogOut">Log Out</a>
+                                </li>
+                            </ul>
+
+                    }
                 </div>
-
-
-
+                
             </div>
         </nav>
     </header>
