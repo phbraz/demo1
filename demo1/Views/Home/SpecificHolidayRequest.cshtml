@@ -10,7 +10,6 @@
     <br />
     <table class="table table-dark">
         <tr>
-            <th>Requester</th>
             <th>StartDate</th>
             <th>EndDate</th>
             <th>Type</th>
@@ -20,7 +19,6 @@
             foreach (var i in Model.holidayRequests)
             {
                 <tr>
-                    <td>@i.RequesterName</td>
                     <td>@i.StartDate.ToShortDateString()</td>
                     <td>@i.EndDate.ToShortDateString()</td>
                     <td>@i.HolidayType</td>

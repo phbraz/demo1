@@ -33,18 +33,34 @@ namespace demo1.Services
             );
         }
 
-        public IEnumerable<UserHolidayRequestViewModel> GetholidayPerCurrent(string userName)
+        public IEnumerable<UserHolidayRequestViewModel> GetholidayPerCurrentUser(string userName)
         {
 
+            var t = _dataContext.HolidayRequests.
+                Join(
+                    _dataContext.Users,
+                    hr => hr.UserId,
+                    u => u.Id,
+                    (hr, u) => new UserHolidayRequestViewModel
+                    {
+                        UserId = hr.UserId,
+                        UserName = u.UserName,
+                        StartDate = hr.StartDate,
+                        EndDate = hr.EndDate
+                    }
+                ).Where(x => x.UserName == userName);
 
-            return _dataContext.HolidayRequests.GroupBy(x => x.UserId)
+            var result = t.GroupBy(x => x.UserId)
                 .Select(x => new UserHolidayRequestViewModel
                 {
                     UserId = x.Key,
                     TotalHolidays = x.Sum(y => EF.Functions.DateDiffDay(y.StartDate, y.EndDate)),
                     RemainingHolidays = 28 - x.Sum(y => EF.Functions.DateDiffDay(y.StartDate, y.EndDate))
+
                 }
-            ).Where(x => x.UserName == userName);
+                );
+
+            return result;
         }
 
         public IEnumerable<HolidayRequestViewModel> GetFullHolidayHistory(string reqName, ApprovalStatus ? status = null)

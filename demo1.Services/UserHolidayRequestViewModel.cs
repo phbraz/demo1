@@ -29,5 +29,11 @@ namespace demo1.Services
 
         public double RemainingHolidays { get; set; }
 
+        //test date 
+
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
+
     }
 }

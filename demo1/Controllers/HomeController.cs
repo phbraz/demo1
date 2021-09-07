@@ -123,7 +123,7 @@ namespace demo1.Controllers
 
                 var vm = new HomeIndexViewModel
                 {
-                    userHolidayRequests = _holidayService.GetholidayPerCurrent(user.Value)
+                    userHolidayRequests = _holidayService.GetholidayPerCurrentUser(user.Value)
                 };
 
                 return View(vm);

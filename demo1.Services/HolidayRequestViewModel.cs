@@ -21,5 +21,7 @@ namespace demo1.Services
 
         public string  UserName { get; set; }
 
+        public int userId { get; set; }
+
     }
 }
