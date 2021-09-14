@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace demo1.Controllers
 {
@@ -268,10 +270,10 @@ namespace demo1.Controllers
             //Grab Token 
             var myToken = _tokenService.GenerateToken(user, _configuration);
 
+           
             //Convert token to string bearer
             var tokenStr = new JwtSecurityTokenHandler().WriteToken(myToken).ToString();
-
-
+           
             //create a new cookie with that token string and some user information to retrive later, maybe a better way to handle it? 
             HttpContext.Response.Cookies.Append("Authorization", tokenStr);
             HttpContext.Response.Cookies.Append("user", user.UserName);
@@ -293,17 +295,49 @@ namespace demo1.Controllers
         //Need to find a better way to validate the token for now this one might work.
         public bool  ValidateToken()
         {
-            var authCookie = HttpContext.Request.Cookies
+            var jwt = new JwtSecurityTokenHandler();
+
+            var validationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidAudience = _configuration["Jwt:Audience"],
+                ValidIssuer = _configuration["Jwt:Issuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
+
+            };
+
+            SecurityToken validatedToken;
+
+            var receivedToken = HttpContext.Request.Cookies
                 .Where(x => x.Key == "Authorization").FirstOrDefault();
 
-            if (authCookie.Value !=null)
+            try
             {
-                return true;
+                var testing = jwt.ValidateToken(receivedToken.Value, validationParameters, out validatedToken);
+
+                if (testing.Identity.IsAuthenticated)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+
+
             }
-            else
+            catch (Exception e)
             {
+                HttpContext.Response.Cookies.Delete("Authorization");
+                HttpContext.Response.Cookies.Delete("user");
+                HttpContext.Response.Cookies.Delete("permission");
                 return false;
             }
+
+
+           
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

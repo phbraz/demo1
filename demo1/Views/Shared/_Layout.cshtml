@@ -1,6 +1,13 @@
-﻿@{ 
+﻿@using System.IdentityModel.Tokens.Jwt;
+
+@{ 
+
     var user = Context.Request.Cookies["user"];
     var token = Context.Request.Cookies["Authorization"];
+
+    //var t = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+
     var isAdmin = Context.Request.Cookies["permission"];
 
 }
