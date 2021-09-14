@@ -39,6 +39,26 @@
                             <td>@i.RequesterName</td>
                             <td>@i.StartDate.ToShortDateString()</td>
                             <td>@i.EndDate.ToShortDateString()</td>
+                            <td>
+                                <form method="post" > <!--one call per row we need to find a way to do it--> <!-- _layout page for ref-->
+                                    <button type="submit" class="btn btn-secondary">Submit</button>
+                                    @Html.DropDownList("status",
+                                    new SelectList(
+                                    new List<SelectListItem>
+                                    {
+                                        new SelectListItem {Text = "Pending", Value = "1"},
+                                        new SelectListItem {Text = "Approved", Value = "2"},
+                                        new SelectListItem {Text = "Rejected", Value = "3"},
+
+                                    },
+                                    "Value",
+                                    "Text"
+
+                                    ), new { @class = "form-control form-control-sm" })
+
+                                </form>                                
+                            </td>
+
                         </tr>
                     }
                 }

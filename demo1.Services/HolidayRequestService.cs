@@ -113,7 +113,7 @@ namespace demo1.Services
                 var holidaRequest = new HolidayRequest
                 {
                     EndDate = holiday.EndDate,
-                    StartDate = holiday.EndDate,
+                    StartDate = holiday.StartDate,
                     RequesterName = holiday.RequesterName,
                     HolidayType = holiday.HolidayType,
                     UserId = userDetails.Id

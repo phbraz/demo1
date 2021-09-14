@@ -15,7 +15,7 @@
 }
 
 
-@if (Model.userHolidayRequests != null)
+@if (Model.userHolidayRequests?.Any() == true)
 {
     <div class="text-center">
         <h1 class="display-4">Holidays Tracker Summary</h1>
